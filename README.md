@@ -1,1 +1,1 @@
-AutoChess -  A  Chess Engine Developed PreHistoricMan.
+AutoChess -  A  Chess Engine Developed by PreHistoricMan.
