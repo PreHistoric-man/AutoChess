@@ -23,7 +23,8 @@ typedef unsigned long long U64;
 #define NAME "AutoChess V1"
 #define BRD_SQ_NUM 120
 #define FR2SQ(f,r)  ( (21 +(f)) + ((r)*10))
-#define SQ64(sq120) Sq120toSq64[sq120];
+#define SQ64(sq120) Sq120toSq64[(sq120)];
+#define SQ120(sq64) (Sq64ToSq120[(sq64)]);
 #define POP(b) PopBit(*b);
 #define CNT(b) CountBit(b);
 extern U64 ClearBit[64];
@@ -38,11 +39,12 @@ extern int Sq64ToSq120[64];
 extern void AllInit();
 extern void InitSq120to64();
 extern void MakeBitsFunc();
+extern void InitGetHashKey();
 
 #define MAXMOVES 2480
 
 enum {
-    EMPTY , wP , wN ,  wB , wQ , wK , bP , bN ,  bB , bQ , bK 
+    EMPTY , wP , wN ,  wB , wQ , wK , bP , bN ,  bB , bQ , bK , OFFBOARD
 };
 enum{
     FILE_A  , FILE_B , FILE_C , FILE_D , FILE_E ,FILE_F,FILE_G,FILE_H,FILE_NONE
@@ -50,7 +52,6 @@ enum{
 enum
 {
     RANK1 , RANK2 , RANK3 , RANK4 , RANK5 , RANK6 , RANK7,RANK8, RANKN
-
 };
 enum
 {
