@@ -29,7 +29,13 @@ void ResetBoard(Board_Struc *pos)
     
     pos->CastlePerm = 0;
 
+    for(index = 0 ; index<13;index++)
+    {
+        pos->pceNum[index] = 0;
+    }
 
+    pos->KingSq[0] = pos->KingSq[1] = NO_SQ;
 
-    
+    pos->poskey = 0ULL;
+
 }

@@ -30,7 +30,6 @@ void MakeHashKeys()
         for(index2 = 0 ; index2 <120 ; index2++)
         {
             PieceKeys[index][index2] = RAND64;
-            printf("Random Values = %d \n" , PieceKeys[index][index2]);
         }
     }
 

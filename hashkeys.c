@@ -2,7 +2,7 @@
 #include "defs.h"
 
 
-//didnt understand this but fine it is a hashing func
+//didnt understand this but fine it is just a  hashing func
 
 void InitGetHashKey(Board_Struc *pos)
 {
@@ -35,6 +35,6 @@ void InitGetHashKey(Board_Struc *pos)
 
     finalKey ^= CasteKeys[pos ->CastlePerm];
 
-    return finalKey;
+    
     
 }
