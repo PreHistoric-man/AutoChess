@@ -1,12 +1,12 @@
-#include <stdio.h>
+#include "stdio.h"
 #include "defs.h"
 #include "stdlib.h"
 
 //rand gives a random 15bit(this is due to rand) no  which is added into a random 64 bit no 
-#define RAND64 ((U64)rand() +\
-                (U64)rand()+15 +\
-                (U64)rand()+30 +\
-                (U64)rand()+45 +\
+#define RAND64 ((U64)rand() | \
+                (U64)rand()+15 | \
+                (U64)rand()+30 | \
+                (U64)rand()+45 | \
                 (U64)rand() & 0xf )<< 60
 
 int Sq120toSq64[BRD_SQ_NUM];
@@ -91,4 +91,5 @@ void AllInit()
     InitSq120to64();
     MakeBitsFunc();
     MakeHashKeys();
+    RankandFileFunc();
 }

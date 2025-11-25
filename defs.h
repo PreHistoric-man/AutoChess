@@ -5,6 +5,7 @@
 #define DEBUG 
 #ifndef DEBUG
 #else
+//used to check if a cond is true or false
 #define ASSERT(n)\
 if(!(n)){ \
     printf("%s - Failed" , #n);\
@@ -52,9 +53,10 @@ typedef struct
     U64 poskey;
 
     int pceNum[13];
-    int bigPce[3];
-    int majPce[3];//Major Pieces are Kings ,  Bishops and all
-    int minPce[3];//Minior Pices are like Pawns
+    int bigPce[2];
+    int majPce[2];//Major Pieces are Kings ,  Bishops and all
+    int minPce[2];
+    int material[2];//Minior Pices are like Pawns
 
 
     S_Undo history[MAXMOVES];
@@ -68,8 +70,27 @@ typedef struct
 #define SQ120(sq64) (Sq64ToSq120[(sq64)]);
 #define POP(b) PopBit(*b);
 #define CNT(b) CountBit(b);
+#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 extern U64 ClearBit[64];
 extern U64 MakeBit[64];
+extern char PceChar[];
+extern char SideChar[];
+extern char RankChar[];
+extern char FileChar[];
+
+extern int majPiece[13];
+extern int minPiece[13];
+extern int PieceVal[13];
+extern int PieceCol[13];
+
+
+
+extern int  PieceBig[13];
+extern int PieceMaj[13];
+extern int PieceVal[13];
+extern int PieceCol[13];
+extern int PieceMin[13];
+
 
 #define CLRBIT(bb , sq)((bb) &= ClearBit[(sq)]);
 #define MKBIT(bB, sq)((bB) |= MakeBit[(sq)]);
@@ -77,18 +98,23 @@ extern U64 MakeBit[64];
 extern int Sq120toSq64[BRD_SQ_NUM];
 extern int Sq64ToSq120[64];
 
+extern int FileBrd[10];
+extern int  RankBrd[10];
+
 //funcs
 extern void AllInit();
 extern void InitSq120to64();
 extern void MakeBitsFunc();
-extern void InitGetHashKey(Board_Struc *pos);
-extern void ResetBoard(Board_Struc *pos);
+extern int  InitGetHashKey(Board_Struc *pos);
+extern int  ResetBoard(Board_Struc *pos);
+extern int   fenfunc(char *fen , Board_Struc *pos);
+extern void  PrintBoard(Board_Struc *pos);
+extern void InitUpdateMaterial(Board_Struc *pos);
+extern void RankandFileFunc();
 
 
 
-enum {
-    EMPTY , wP , wN ,  wB , wQ , wK , bP , bN ,  bB , bQ , bK , OFFBOARD
-};
+enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK  };
 enum{
     FILE_A  , FILE_B , FILE_C , FILE_D , FILE_E ,FILE_F,FILE_G,FILE_H,FILE_NONE
 };
@@ -109,7 +135,7 @@ enum{
     A5 = 61 , B5,C5,D5,E5,F5,G5,H5,
     A6 = 71 , B6,C6,D6,E6,F6,G6,H6,
     A7 = 81 , B7,C7,D7,E7,F7,G7,H7,
-    A8 = 91 , B8,C8,D8,E8,F8,G8,H8,NO_SQ,
+    A8 = 91 , B8,C8,D8,E8,F8,G8,H8,NO_SQ,OFFBOARD
 };
 
 
@@ -118,6 +144,8 @@ enum
 {
     FALSE,TRUE
 };
+
+//castle constants
 enum{
     WKC = 1,
     WQC = 2,
@@ -125,12 +153,6 @@ enum{
     BQC = 8,
 };
 //creating the board representations that is the board information
-
-
-
-
-//Macros
-
 
 //Globals
 

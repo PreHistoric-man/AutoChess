@@ -4,7 +4,7 @@
 
 //didnt understand this but fine it is just a  hashing func
 
-void InitGetHashKey(Board_Struc *pos)
+int  InitGetHashKey(Board_Struc *pos)
 {
     int sq = 0;
     U64 finalKey;
@@ -12,7 +12,7 @@ void InitGetHashKey(Board_Struc *pos)
 
     for (int index = 0; index < BRD_SQ_NUM; index++)
     {
-        piece = pos-> pieces[sq];
+        piece = pos->pieces[sq];
         if(piece!=NO_SQ && piece != EMPTY)
         {
             ASSERT(piece>=wP && piece<=bK)
@@ -24,7 +24,6 @@ void InitGetHashKey(Board_Struc *pos)
     {
         finalKey ^=  SideKey;
     }
-
     if (pos->enPas = NO_SQ)
     {
         ASSERT(pos ->enPas>=0 && pos->enPas<BRD_SQ_NUM);
@@ -35,6 +34,5 @@ void InitGetHashKey(Board_Struc *pos)
 
     finalKey ^= CasteKeys[pos ->CastlePerm];
 
-    
-    
+    return finalKey;
 }
