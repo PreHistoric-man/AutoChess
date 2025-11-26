@@ -31,6 +31,13 @@ typedef struct
 
 }S_Undo;
 
+extern int PiecePawn[13]; 	
+extern int PieceKnight[13];
+extern int PieceKing[13];
+extern int PieceRookQueen[13]; 
+extern int PieceBishopQueen[13]; 
+extern int PieceSlides[13]; 
+
 typedef struct 
 {
     int pieces[BRD_SQ_NUM];
@@ -92,8 +99,13 @@ extern int PieceCol[13];
 extern int PieceMin[13];
 
 
-#define CLRBIT(bb , sq)((bb) &= ClearBit[(sq)]);
-#define MKBIT(bB, sq)((bB) |= MakeBit[(sq)]);
+#define CLRBIT(bb,sq)((bb) &= ClearBit[(sq)]);
+#define MKBIT(bB,sq)((bB) |= MakeBit[(sq)]);
+
+#define IsBQ(p) (PieceBishopQueen[(p)])
+#define IsRQ(p) (PieceRookQueen[(p)])
+#define IsKn(p) (PieceKnight[(p)])
+#define IsKi(p) (PieceKing[(p)])
 
 extern int Sq120toSq64[BRD_SQ_NUM];
 extern int Sq64ToSq120[64];
@@ -105,13 +117,14 @@ extern int  RankBrd[10];
 extern void AllInit();
 extern void InitSq120to64();
 extern void MakeBitsFunc();
-extern int  InitGetHashKey(Board_Struc *pos);
+extern U64  InitGetHashKey(Board_Struc *pos);
 extern int  ResetBoard(Board_Struc *pos);
-extern int   fenfunc(char *fen , Board_Struc *pos);
-extern void  PrintBoard(Board_Struc *pos);
+extern int  fenfunc(char *fen , Board_Struc *pos);
+extern void PrintBoard(Board_Struc *pos);
 extern void InitUpdateMaterial(Board_Struc *pos);
 extern void RankandFileFunc();
-
+extern int CheckBoard(Board_Struc *pos);
+extern int SqAttacked(const int sq , const int side , const Board_Struc *pos);
 
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK  };

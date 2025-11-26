@@ -3,39 +3,129 @@
 
 
 //making a piece list and updating as the game progresses
-void InitUpdateMaterial(Board_Struc *pos)
-{
-    int sq , color , material , piece ;
-    for(int i = 0 ; i<BRD_SQ_NUM ; i++)
-    {
-        sq = i;
-        piece = pos->pieces[i];
-        if(piece!=OFFBOARD && piece !=EMPTY)
-        {
-            color = PieceCol[i];
+void InitUpdateMaterial(Board_Struc *pos) {
 
-            if(PieceBig[piece] == TRUE){pos->bigPce[color]++;}
-            if(PieceMaj[piece] == TRUE){pos->majPce[color]++;}
-            if(PieceMin[piece] == TRUE){pos->minPce[color]++;}
+	int piece,sq,index,colour;
 
-            //material is the total amt of pieces u have so like we are adding the values of pieces and getting a total score of how much "material" ur having
-            pos->material[color] += PieceVal[i]; 
+	for(index = 0; index < BRD_SQ_NUM; ++index) {
+		sq = index;
+		piece = pos->pieces[index];
 
-            pos->piecelist[piece][pos->pceNum[piece]] = sq;
+		if(piece!=OFFBOARD && piece!= EMPTY) {
+			colour = PieceCol[piece];
 
-            if(piece == bK)
-            {
-                pos->KingSq[BLACK] = sq;
-            }
-            if(piece == wK)
-            {
-                pos->KingSq[WHITE] = sq;
-            }
-        }
+		    if( PieceBig[piece] == TRUE) pos->bigPce[colour]++;
+		    if( PieceMin[piece] == TRUE) pos->minPce[colour]++;
+		    if( PieceMaj[piece] == TRUE) pos->majPce[colour]++;
 
-    }
+			pos->material[colour] += PieceVal[piece];
 
+			ASSERT(pos->pceNum[piece] < 10 && pos->pceNum[piece] >= 0);
+
+			pos->piecelist[piece][pos->pceNum[piece]] = sq;
+			pos->pceNum[piece]++;
+
+
+			if(piece==wK) pos->KingSq[WHITE] = sq;
+			if(piece==bK) pos->KingSq[BLACK] = sq;
+
+			if(piece==wP) {
+				MKBIT(pos->Pawns[WHITE],Sq120toSq64[sq]);
+				MKBIT(pos->Pawns[BOTH],Sq120toSq64[sq]);
+			} else if(piece==bP) {
+				MKBIT(pos->Pawns[BLACK],Sq120toSq64[sq]);
+				MKBIT(pos->Pawns[BOTH],Sq120toSq64[sq]);
+			}
+		}
+	}
 }
+
+
+int CheckBoard(Board_Struc *pos) {
+
+	int t_pceNum[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	int t_bigPce[2] = { 0, 0};
+	int t_majPce[2] = { 0, 0};
+	int t_minPce[2] = { 0, 0};
+	int t_material[2] = { 0, 0};
+
+	int sq64,t_piece,t_pce_num,sq120,colour,pcount;
+
+	U64 t_pawns[3] = {0ULL, 0ULL, 0ULL};
+
+	t_pawns[WHITE] = pos->Pawns[WHITE];
+	t_pawns[BLACK] = pos->Pawns[BLACK];
+	t_pawns[BOTH] = pos->Pawns[BOTH];
+
+	// check piece lists
+	for(t_piece = wP; t_piece <= bK; ++t_piece) {
+		for(t_pce_num = 0; t_pce_num < pos->pceNum[t_piece]; ++t_pce_num) {
+			sq120 = pos->piecelist[t_piece][t_pce_num];
+			ASSERT(pos->pieces[sq120]==t_piece);
+		}
+	}
+
+	// check piece count and other counters
+	for(sq64 = 0; sq64 < 64; ++sq64) {
+		sq120 = SQ120(sq64);
+		t_piece = pos->pieces[sq120];
+		t_pceNum[t_piece]++;
+		colour = PieceCol[t_piece];
+		if( PieceBig[t_piece] == TRUE) t_bigPce[colour]++;
+		if( PieceMin[t_piece] == TRUE) t_minPce[colour]++;
+		if( PieceMaj[t_piece] == TRUE) t_majPce[colour]++;
+
+		t_material[colour] += PieceVal[t_piece];
+	}
+
+	for(t_piece = wP; t_piece <= bK; ++t_piece) {
+		ASSERT(t_pceNum[t_piece]==pos->pceNum[t_piece]);
+	}
+
+	// check bitboards count
+	pcount = CNT(t_pawns[WHITE]);
+	ASSERT(pcount == pos->pceNum[wP]);
+	pcount = CNT(t_pawns[BLACK]);
+	ASSERT(pcount == pos->pceNum[bP]);
+	pcount = CNT(t_pawns[BOTH]);
+	ASSERT(pcount == (pos->pceNum[bP] + pos->pceNum[wP]));
+
+	// check bitboards squares
+	while(t_pawns[WHITE]) {
+		sq64 = PopBit(&t_pawns[WHITE]);
+		ASSERT(pos->pieces[Sq64ToSq120[sq64]] == wP);
+	}
+
+	while(t_pawns[BLACK]) {
+		sq64 = PopBit(&t_pawns[BLACK]);
+		ASSERT(pos->pieces[Sq64ToSq120[sq64]] == bP);
+	}
+
+	while(t_pawns[BOTH]) {
+		sq64 = PopBit(&t_pawns[BOTH]);
+		ASSERT((pos->pieces[Sq64ToSq120[sq64]] == bP) || (pos->pieces[Sq64ToSq120[sq64]] == wP));
+	}
+
+	//ASSERT(t_material[WHITE]==pos->material[WHITE] && t_material[BLACK]==pos->material[BLACK]);
+	ASSERT(t_minPce[WHITE]==pos->minPce[WHITE] && t_minPce[BLACK]==pos->minPce[BLACK]);
+	ASSERT(t_majPce[WHITE]==pos->majPce[WHITE] && t_majPce[BLACK]==pos->majPce[BLACK]);
+	ASSERT(t_bigPce[WHITE]==pos->bigPce[WHITE] && t_bigPce[BLACK]==pos->bigPce[BLACK]);
+
+	ASSERT(pos->side==WHITE || pos->side==BLACK);
+    //look into problem
+	//ASSERT(InitGetHashKey(pos)==pos->poskey);
+	ASSERT(pos->enPas==NO_SQ || ( RankBrd[pos->enPas]==RANK6 && pos->side == WHITE)
+		 || ( RankBrd[pos->enPas]==RANK3 && pos->side == BLACK));
+
+	ASSERT(pos->pieces[pos->KingSq[WHITE]] == wK);
+	ASSERT(pos->pieces[pos->KingSq[BLACK]] == bK);
+
+	ASSERT(pos->CastlePerm >= 0 && pos->CastlePerm <= 15);
+
+	return TRUE;
+}
+
+
 
 int FileBrd[10];
 int RankBrd[10];
@@ -167,13 +257,14 @@ int fenfunc(char *fen , Board_Struc *pos)
     {
         file = fen[0] - 'a';
         rank =  fen[1] - '1';
-        ASSERT(file>FILE_A && file < FILE_H);
-        ASSERT(rank>RANK1 && rank < RANK8);
+        //ASSERT(file>FILE_A && file < FILE_H);
+        //ASSERT(rank>RANK1 && rank < RANK8);
         pos->enPas = FR2SQ(file,rank);
     }
 
     pos->poskey = InitGetHashKey(pos);
 
+    InitUpdateMaterial(pos);
     return 0 ;
 
 

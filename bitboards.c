@@ -10,12 +10,11 @@ const int BitTable[64] = {
 
 //poping out the Least Significant Bits But How??
 //De Brijan Constant it seems 
-int PopBit(U64 *bB)
-{
-    U64 b = *bB^(*bB - 1);
-    unsigned int fold = (unsigned)((b & 0xffffffff) ^ (b >> 32));
-    *bB &= (*bB-1);
-    return BitTable[(fold * 0x783a9b23)>>26];
+int PopBit(U64 *bb) {
+  U64 b = *bb ^ (*bb - 1);
+  unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b >> 32));
+  *bb &= (*bb - 1);
+  return BitTable[(fold * 0x783a9b23) >> 26];
 }
 int CountBit(U64 b)
 {
