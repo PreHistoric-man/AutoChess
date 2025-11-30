@@ -1,1 +1,1 @@
-gcc ac.c init.c bitboards.c hashkeys.c data.c board.c -o ac
+gcc ac.c init.c bitboards.c hashkeys.c data.c board.c attack.c io.c movegen.c validate.c -o ac

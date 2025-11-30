@@ -22,7 +22,8 @@ U64 InitGetHashKey(Board_Struc *pos) {
 		}		
 	}
 	
-	if(pos->side == WHITE) {
+	if(pos->side == WHITE) 
+	{
 		finalKey ^= SideKey;
 	}
 		

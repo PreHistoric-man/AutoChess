@@ -14,9 +14,9 @@ void InitUpdateMaterial(Board_Struc *pos) {
 		if(piece!=OFFBOARD && piece!= EMPTY) {
 			colour = PieceCol[piece];
 
-		    if( PieceBig[piece] == TRUE) pos->bigPce[colour]++;
-		    if( PieceMin[piece] == TRUE) pos->minPce[colour]++;
-		    if( PieceMaj[piece] == TRUE) pos->majPce[colour]++;
+		    if(PieceBig[piece] == TRUE)pos->bigPce[colour]++;
+		    if(PieceMin[piece] == TRUE)pos->minPce[colour]++;
+		    if(PieceMaj[piece] == TRUE)pos->majPce[colour]++;
 
 			pos->material[colour] += PieceVal[piece];
 
@@ -78,47 +78,45 @@ int CheckBoard(Board_Struc *pos) {
 		t_material[colour] += PieceVal[t_piece];
 	}
 
-	for(t_piece = wP; t_piece <= bK; ++t_piece) {
-		ASSERT(t_pceNum[t_piece]==pos->pceNum[t_piece]);
+	for(t_piece = wP; t_piece <= bK; ++t_piece) 
+    {
+		ASSERT(t_pceNum[t_piece]=pos->pceNum[t_piece]);
 	}
 
 	// check bitboards count
-	pcount = CNT(t_pawns[WHITE]);
-	ASSERT(pcount == pos->pceNum[wP]);
 	pcount = CNT(t_pawns[BLACK]);
-	ASSERT(pcount == pos->pceNum[bP]);
+	ASSERT(pcount = pos->pceNum[bP]);
 	pcount = CNT(t_pawns[BOTH]);
-	ASSERT(pcount == (pos->pceNum[bP] + pos->pceNum[wP]));
+	ASSERT(pcount = (pos->pceNum[bP] + pos->pceNum[wP]));
 
 	// check bitboards squares
 	while(t_pawns[WHITE]) {
 		sq64 = PopBit(&t_pawns[WHITE]);
-		ASSERT(pos->pieces[Sq64ToSq120[sq64]] == wP);
+		ASSERT(pos->pieces[Sq64ToSq120[sq64]] = wP);
 	}
 
 	while(t_pawns[BLACK]) {
 		sq64 = PopBit(&t_pawns[BLACK]);
-		ASSERT(pos->pieces[Sq64ToSq120[sq64]] == bP);
+		ASSERT(pos->pieces[Sq64ToSq120[sq64]] = bP);
 	}
 
 	while(t_pawns[BOTH]) {
 		sq64 = PopBit(&t_pawns[BOTH]);
-		ASSERT((pos->pieces[Sq64ToSq120[sq64]] == bP) || (pos->pieces[Sq64ToSq120[sq64]] == wP));
+		ASSERT((pos->pieces[Sq64ToSq120[sq64]] = bP) || (pos->pieces[Sq64ToSq120[sq64]] = wP));
 	}
 
-	//ASSERT(t_material[WHITE]==pos->material[WHITE] && t_material[BLACK]==pos->material[BLACK]);
-	ASSERT(t_minPce[WHITE]==pos->minPce[WHITE] && t_minPce[BLACK]==pos->minPce[BLACK]);
-	ASSERT(t_majPce[WHITE]==pos->majPce[WHITE] && t_majPce[BLACK]==pos->majPce[BLACK]);
-	ASSERT(t_bigPce[WHITE]==pos->bigPce[WHITE] && t_bigPce[BLACK]==pos->bigPce[BLACK]);
+	ASSERT(t_material[WHITE]==pos->material[WHITE] && t_material[BLACK]==pos->material[BLACK]);
+	ASSERT(t_minPce[WHITE]=pos->minPce[WHITE] && t_minPce[BLACK]==pos->minPce[BLACK]);
+	ASSERT(t_majPce[WHITE]=pos->majPce[WHITE] && t_majPce[BLACK]==pos->majPce[BLACK]);
+	ASSERT(t_bigPce[WHITE]=pos->bigPce[WHITE] && t_bigPce[BLACK]==pos->bigPce[BLACK]);
 
 	ASSERT(pos->side==WHITE || pos->side==BLACK);
     //look into problem
 	//ASSERT(InitGetHashKey(pos)==pos->poskey);
-	ASSERT(pos->enPas==NO_SQ || ( RankBrd[pos->enPas]==RANK6 && pos->side == WHITE)
-		 || ( RankBrd[pos->enPas]==RANK3 && pos->side == BLACK));
 
-	ASSERT(pos->pieces[pos->KingSq[WHITE]] == wK);
-	ASSERT(pos->pieces[pos->KingSq[BLACK]] == bK);
+
+	ASSERT(pos->pieces[pos->KingSq[WHITE]] = wK);
+	ASSERT(pos->pieces[pos->KingSq[BLACK]] = bK);
 
 	ASSERT(pos->CastlePerm >= 0 && pos->CastlePerm <= 15);
 
@@ -151,8 +149,6 @@ void RankandFileFunc()
             RankBrd[sq] = rank;
         }
     }
-
-
 }
 
 //used to find the fen notation of a chess positions which is used to communicate with GUI

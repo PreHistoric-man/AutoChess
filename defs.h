@@ -18,9 +18,27 @@ if(!(n)){ \
 #endif
 
 #define MAXMOVES 2480
+#define MAXPOSITIONSMOVES 256
+
+typedef struct {
+	int move;
+	int score;
+} S_MOVE;
+
+
+typedef struct 
+{
+    S_MOVE moves[MAXPOSITIONSMOVES];
+    int count;
+    /* data */
+}S_MOVELIST;
+
+
+
 
 typedef unsigned long long U64;
 #define BRD_SQ_NUM 120
+
 typedef struct
 {
     int move;
@@ -37,6 +55,20 @@ extern int PieceKing[13];
 extern int PieceRookQueen[13]; 
 extern int PieceBishopQueen[13]; 
 extern int PieceSlides[13]; 
+
+/*Move Formats defs - basically it is the information of a move done in a chess board stored in 32 bit integer*/
+#define FROMSQ(m) ((m) & 0x7F)
+#define TOSQ(m) (((m) >> 7) & 0x7F)
+#define CAPTURED(m) (((m) >> 14) & 0xF)
+#define PROMOTED(m) (((m) >> 20) & 0xF)
+
+#define MFLAGEP 0x40000
+#define MFLAGPS 0x80000
+#define MFLAGCA 0x1000000
+
+#define MFLAGCAP 0x7C000
+#define MFLAGPROM 0xF00000
+
 
 typedef struct 
 {
@@ -125,7 +157,15 @@ extern void InitUpdateMaterial(Board_Struc *pos);
 extern void RankandFileFunc();
 extern int CheckBoard(Board_Struc *pos);
 extern int SqAttacked(const int sq , const int side , const Board_Struc *pos);
-
+extern char *prtStr(const int move);
+extern char *PrMove(const int move);
+extern int SqOnBoard(const int sq);
+extern int sideValid(const int side);
+extern int PieceRankValid(const int fr);
+extern int PieceValidEmpty(const int pce);
+extern int PieceValid(const int p);
+extern void PrintMoveList(const S_MOVELIST *list);
+extern void GenerateAllMoves(Board_Struc *pos , S_MOVELIST *list);
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK  };
 enum{
